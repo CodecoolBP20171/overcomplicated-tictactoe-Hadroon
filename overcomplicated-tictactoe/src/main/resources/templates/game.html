@@ -17,6 +17,7 @@
             <div class="media-body">
                 <h1 class="media-heading">The coolest TicTacToe in the World</h1>
                 <p>OK, just a bit overcomplicated...</p>
+                <h2 th:if="${msg}" th:text="${msg}">Msg</h2>
             </div>
             <div class="media-right">
                 <span class="media-heading" th:text="${player.userName}"/>

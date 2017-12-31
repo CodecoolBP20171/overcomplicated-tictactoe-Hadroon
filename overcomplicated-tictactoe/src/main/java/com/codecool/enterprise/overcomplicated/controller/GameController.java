@@ -49,10 +49,14 @@ public class GameController {
     }
 
     @GetMapping(value = "/game")
-    public String gameView(@ModelAttribute("player") Player player, Model model) throws Exception {
+    public String gameView(
+            @ModelAttribute("player") Player player,
+            Model model,
+            @ModelAttribute("msg") String msg) throws Exception {
         model.addAttribute("funfact", "&quot;Chuck Norris knows the last digit of pi.&quot;");
         model.addAttribute("comic_uri", "https://imgs.xkcd.com/comics/bad_code.png");
         model.addAttribute("board", stateController.getGameStateArray());
+        model.addAttribute("msg", msg);
 
 //        JSONObject jsonObject = apiController.sendGet("https://api.chucknorris.io/jokes/random");
 //        String name = (String) jsonObject.get("value");
@@ -65,8 +69,13 @@ public class GameController {
 
     @GetMapping(value = "/game-move")
     public String gameMove(@ModelAttribute("player") Player player, @ModelAttribute("move") int move) {
+        String title = stateController.getGameStateArray().get(move);
+        if (title == oMark || title == xMark) {
+            return "redirect:/game?msg=Wrong move!";
+        }
         stateController.getGameStateArray().set(move, oMark);
-        System.out.println("Player moved " + move);
+
+        //System.out.println("Player moved " + move);
         return "redirect:/game";
     }
 }
