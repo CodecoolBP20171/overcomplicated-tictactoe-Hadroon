@@ -17,6 +17,8 @@ public class GameController {
     public final String oMark = "<i class=\"fa fa-circle-o\" aria-hidden=\"true\"></i>";
     public final String xMark = "<i class=\"fa fa-times\" aria-hidden=\"true\"></i>";
 
+    String xoState = xMark;
+
     @Autowired
     StateController stateController;
 
@@ -73,8 +75,13 @@ public class GameController {
         if (title == oMark || title == xMark) {
             return "redirect:/game?msg=Wrong move!";
         }
-        stateController.getGameStateArray().set(move, oMark);
-
+        stateController.getGameStateArray().set(move, xoState);
+        if (xoState == oMark) {
+            xoState = xMark;
+        } else {
+            xoState = oMark;
+        }
+        
         //System.out.println("Player moved " + move);
         return "redirect:/game";
     }
