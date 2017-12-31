@@ -76,12 +76,21 @@ public class GameController {
             return "redirect:/game?msg=Wrong move!";
         }
         stateController.getGameStateArray().set(move, xoState);
+        if (stateController.checkWin()) {
+            String winner;
+            if (xoState == xMark) {
+                winner = "X";
+            } else {
+                winner = "O";
+            }
+            return "redirect:/game?msg=" + winner + " Won!";
+        }
         if (xoState == oMark) {
             xoState = xMark;
         } else {
             xoState = oMark;
         }
-        
+
         //System.out.println("Player moved " + move);
         return "redirect:/game";
     }
