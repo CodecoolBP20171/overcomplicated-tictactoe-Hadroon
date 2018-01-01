@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 @Controller
 @SessionAttributes({"player", "game"})
@@ -42,6 +43,9 @@ public class GameController {
 
     @GetMapping(value = "/")
     public String welcomeView(@ModelAttribute Player player) throws Exception {
+//        JSONObject jsonObject = apiController.sendGet("https://api.chucknorris.io/jokes/random");
+//        String name = (String) jsonObject.get("value");
+//        System.out.println(name);
         return "welcome";
     }
 
@@ -55,22 +59,22 @@ public class GameController {
             @ModelAttribute("player") Player player,
             Model model,
             @ModelAttribute("msg") String msg) throws Exception {
-        model.addAttribute("funfact", "&quot;Chuck Norris knows the last digit of pi.&quot;");
-        model.addAttribute("comic_uri", "https://imgs.xkcd.com/comics/bad_code.png");
+        
+        JSONObject chuckJson = apiController.sendGet("https://api.chucknorris.io/jokes/random");
+        model.addAttribute("funfact", (String) chuckJson.get("value"));
+
+        Random rand = new Random();
+        int  randomNumber = rand.nextInt(1900) + 1;
+        JSONObject comicJson = apiController.sendGet("https://xkcd.com/" + randomNumber + "/info.0.json");
+        model.addAttribute("comic_uri", (String) comicJson.get("img"));
+
         model.addAttribute("board", stateController.getGameStateArray());
         model.addAttribute("msg", msg);
-
-//        JSONObject jsonObject = apiController.sendGet("https://api.chucknorris.io/jokes/random");
-//        String name = (String) jsonObject.get("value");
-//        System.out.println(name);
-
-
-
         return "game";
     }
 
     @GetMapping(value = "/game-move")
-    public String gameMove(@ModelAttribute("player") Player player, @ModelAttribute("move") int move) {
+    public String gameMove(@ModelAttribute("player") Player player, @ModelAttribute("move") int move) throws Exception {
         String title = stateController.getGameStateArray().get(move);
         if (title == oMark || title == xMark) {
             return "redirect:/game?msg=Wrong move!";
@@ -85,13 +89,16 @@ public class GameController {
             }
             return "redirect:/game?msg=" + winner + " Won!";
         }
+
+//        JSONObject jsonObject = apiController.sendGet("http://tttapi.herokuapp.com/api/v1/-O-----X-/O");
+//        String name = (String) jsonObject.get("recommendation");
+//        System.out.println(name);
+
         if (xoState == oMark) {
             xoState = xMark;
         } else {
             xoState = oMark;
         }
-
-        //System.out.println("Player moved " + move);
         return "redirect:/game";
     }
 }

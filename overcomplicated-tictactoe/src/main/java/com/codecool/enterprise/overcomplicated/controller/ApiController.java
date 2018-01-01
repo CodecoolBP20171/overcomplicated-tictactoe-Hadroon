@@ -76,6 +76,11 @@ public class ApiController {
 //            response.append(inputLine);
 //        }
 //        in.close();
+
+        //print result
+        //System.out.println(response);
+
+
 //        URL url2 = new URL("https://graph.facebook.com/search?q=java&type=post");
 //        try (InputStream is = url.openStream();
 //             JsonReader rdr = Json.createReader(is)) {
