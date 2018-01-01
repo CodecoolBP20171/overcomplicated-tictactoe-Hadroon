@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 @Controller
-@SessionAttributes({"player", "game"})
+@SessionAttributes({"player", "game", "avatar_uri"})
 public class GameController {
 
     public final String oMark = "<i class=\"fa fa-circle-o\" aria-hidden=\"true\"></i>";
@@ -37,8 +37,10 @@ public class GameController {
     }
 
     @ModelAttribute("avatar_uri")
-    public String getAvatarUri() {
-        return "https://robohash.org/codecool";
+    public String getAvatarUri() throws Exception {
+        Random rand = new Random();
+        int  randomNumber = rand.nextInt(1900) + 1;
+        return "https://robohash.org/" + randomNumber + ".png?size=90x90";
     }
 
     @GetMapping(value = "/")
@@ -59,7 +61,7 @@ public class GameController {
             @ModelAttribute("player") Player player,
             Model model,
             @ModelAttribute("msg") String msg) throws Exception {
-        
+
         JSONObject chuckJson = apiController.sendGet("https://api.chucknorris.io/jokes/random");
         model.addAttribute("funfact", (String) chuckJson.get("value"));
 
