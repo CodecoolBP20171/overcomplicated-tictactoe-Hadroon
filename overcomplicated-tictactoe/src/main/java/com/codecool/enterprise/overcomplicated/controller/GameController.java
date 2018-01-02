@@ -8,7 +8,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.Random;
 import static java.lang.Math.toIntExact;
 
@@ -46,9 +45,6 @@ public class GameController {
 
     @GetMapping(value = "/")
     public String welcomeView(@ModelAttribute Player player) throws Exception {
-//        JSONObject jsonObject = apiController.sendGet("https://api.chucknorris.io/jokes/random");
-//        String name = (String) jsonObject.get("value");
-//        System.out.println(name);
         return "welcome";
     }
 
@@ -88,37 +84,19 @@ public class GameController {
         stateController.getGameStateArray().set(move, xoState);
 
         if (stateController.checkWin()) {
-            String winner;
-            if (xoState == xMark) {
-                winner = "X";
-            } else {
-                winner = "O";
-            }
-            return "redirect:/game?msg=" + winner + " Won!";
+            return "redirect:/game?msg=X Won!";
         }
 
-        if (xoState == oMark) {
-            xoState = xMark;
-        } else {
-            xoState = oMark;
-        }
-
-        String mark = (xoState == xMark) ? "X":"O";
-        String aiLink = "http://localhost:5000/api/v1/" + stateController.stateToString() + "/" + mark;
-        //System.out.println(aiLink);
+        String aiLink = "http://localhost:5000/api/v1/" + stateController.stateToString() + "/O";
         JSONObject aiJson = apiController.sendGet(aiLink);
-
         int aiRecommendation = toIntExact( (Long) aiJson.get("recommendation"));
-        System.out.println(aiRecommendation);
 
-        stateController.getGameStateArray().set( aiRecommendation, xoState);
+        stateController.getGameStateArray().set(aiRecommendation, oMark);
 
-
-        if (xoState == oMark) {
-            xoState = xMark;
-        } else {
-            xoState = oMark;
+        if (stateController.checkWin()) {
+            return "redirect:/game?msg=O Won!";
         }
+
         return "redirect:/game";
     }
 }
