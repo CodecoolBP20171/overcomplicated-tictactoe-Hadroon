@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Random;
+import static java.lang.Math.toIntExact;
 
 @Controller
 @SessionAttributes({"player", "game", "avatar_uri"})
@@ -77,11 +78,15 @@ public class GameController {
 
     @GetMapping(value = "/game-move")
     public String gameMove(@ModelAttribute("player") Player player, @ModelAttribute("move") int move) throws Exception {
+
         String title = stateController.getGameStateArray().get(move);
+
         if (title == oMark || title == xMark) {
             return "redirect:/game?msg=Wrong move!";
         }
+
         stateController.getGameStateArray().set(move, xoState);
+
         if (stateController.checkWin()) {
             String winner;
             if (xoState == xMark) {
@@ -92,9 +97,22 @@ public class GameController {
             return "redirect:/game?msg=" + winner + " Won!";
         }
 
-//        JSONObject jsonObject = apiController.sendGet("http://tttapi.herokuapp.com/api/v1/-O-----X-/O");
-//        String name = (String) jsonObject.get("recommendation");
-//        System.out.println(name);
+        if (xoState == oMark) {
+            xoState = xMark;
+        } else {
+            xoState = oMark;
+        }
+
+        String mark = (xoState == xMark) ? "X":"O";
+        String aiLink = "http://localhost:5000/api/v1/" + stateController.stateToString() + "/" + mark;
+        //System.out.println(aiLink);
+        JSONObject aiJson = apiController.sendGet(aiLink);
+
+        int aiRecommendation = toIntExact( (Long) aiJson.get("recommendation"));
+        System.out.println(aiRecommendation);
+
+        stateController.getGameStateArray().set( aiRecommendation, xoState);
+
 
         if (xoState == oMark) {
             xoState = xMark;

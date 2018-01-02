@@ -7,12 +7,15 @@ import java.util.ArrayList;
 @Controller
 public class StateController {
 
+    public final String oMark = "<i class=\"fa fa-circle-o\" aria-hidden=\"true\"></i>";
+    public final String xMark = "<i class=\"fa fa-times\" aria-hidden=\"true\"></i>";
+
     public String gameStateString;
 
     public ArrayList<String> gameStateArray = new ArrayList();
 
     public StateController() {
-        this.gameStateString = "---------";
+        this.gameStateString = "";
         this.gameStateArray.add("");
         this.gameStateArray.add("");
         this.gameStateArray.add("");
@@ -22,6 +25,20 @@ public class StateController {
         this.gameStateArray.add("");
         this.gameStateArray.add("");
         this.gameStateArray.add("");
+    }
+
+    public String stateToString() {
+        gameStateString = "";
+        for (int i=0; i<=8; i++ ) {
+            if (gameStateArray.get(i) == "") {
+                gameStateString += "-";
+            } else if (gameStateArray.get(i) == xMark) {
+                gameStateString += "X";
+            } else if (gameStateArray.get(i) == oMark) {
+                gameStateString += "O";
+            }
+        }
+        return gameStateString;
     }
 
     public boolean checkWin () {
